@@ -1,0 +1,52 @@
+@baseUrl = http://localhost:3000
+
+### список оценок: 200
+GET {{baseUrl}}/grades
+
+### добавить оценку: 201
+# @name createGrade
+POST {{baseUrl}}/grades
+Content-Type: application/json
+
+{
+  "student": "Ivan Petrov",
+  "subject": "Mathematics",
+  "value": 5,
+  "date": "2026-09-09",
+  "comment": "Homework"
+}
+
+### получить оценку: 200
+GET {{baseUrl}}/grades/{{createGrade.response.body.$.id}}
+
+### фильтр 200
+GET {{baseUrl}}/grades?student=Ivan%20Petrov&subject=Mathematics
+
+### замена оценки 200
+PUT {{baseUrl}}/grades/{{createGrade.response.body.$.id}}
+Content-Type: application/json
+
+{
+  "student": "Ivan Petrov",
+  "subject": "Mathematics",
+  "value": 4,
+  "date": "2026-09-09",
+  "comment": "Corrected grade"
+}
+
+### неправильное значение 400
+POST {{baseUrl}}/grades
+Content-Type: application/json
+
+{
+  "student": "Ivan Petrov",
+  "subject": "Mathematics",
+  "value": 6,
+  "date": "2026-09-09"
+}
+
+### 204, empty body
+DELETE {{baseUrl}}/grades/{{createGrade.response.body.$.id}}
+
+### 404
+DELETE {{baseUrl}}/grades/{{createGrade.response.body.$.id}}
