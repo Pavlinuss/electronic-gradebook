@@ -1,29 +1,72 @@
 @baseUrl = http://localhost:3000
+@email = student@example.com
+@password = StudentPass123!
+
+### Register: 201, repeat: 409 (always role user)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Login: 200; execute before authenticated requests
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Current user: 200, password hash is never returned
+GET {{baseUrl}}/profile
+Authorization: Bearer {{login.response.body.$.token}}
+
+### Missing token: 401
+GET {{baseUrl}}/profile
+
+### Invalid token: 401
+GET {{baseUrl}}/profile
+Authorization: Bearer invalid-token
+
+# Grade writes below return 403 for user.
+# To test admin access after registration, run locally:
+# npm run user:admin -- student@example.com
+# Existing tokens use the updated database role immediately.
 
 ### список оценок: 200
 GET {{baseUrl}}/grades
+Authorization: Bearer {{login.response.body.$.token}}
 
 ### добавить оценку: 201
 # @name createGrade
 POST {{baseUrl}}/grades
+Authorization: Bearer {{login.response.body.$.token}}
 Content-Type: application/json
 
 {
-  "student": "Ivan Petrov",
-  "subject": "Mathematics",
+  "student": "Pavel Dudnikov",
+  "subject": "IT",
   "value": 5,
   "date": "2026-09-09",
-  "comment": "Homework"
+  "comment": "Homework",
+  "semester": 1
 }
 
 ### получить оценку: 200
 GET {{baseUrl}}/grades/{{createGrade.response.body.$.id}}
+Authorization: Bearer {{login.response.body.$.token}}
 
 ### фильтр 200
 GET {{baseUrl}}/grades?student=Ivan%20Petrov&subject=Mathematics
+Authorization: Bearer {{login.response.body.$.token}}
 
 ### замена оценки 200
 PUT {{baseUrl}}/grades/{{createGrade.response.body.$.id}}
+Authorization: Bearer {{login.response.body.$.token}}
 Content-Type: application/json
 
 {
@@ -31,22 +74,26 @@ Content-Type: application/json
   "subject": "Mathematics",
   "value": 4,
   "date": "2026-09-09",
-  "comment": "Corrected grade"
+  "comment": "Corrected grade",
+  "semester": 1
 }
 
 ### неправильное значение 400
 POST {{baseUrl}}/grades
+Authorization: Bearer {{login.response.body.$.token}}
 Content-Type: application/json
 
-{
-  "student": "Ivan Petrov",
-  "subject": "Mathematics",
-  "value": 6,
-  "date": "2026-09-09"
-}
+  {
+    "student": "Ivan Petrov",
+    "subject": "Mathematics",
+    "value": 6,
+    "date": "2026-09-09"
+  }
 
 ### 204, empty body
 DELETE {{baseUrl}}/grades/{{createGrade.response.body.$.id}}
+Authorization: Bearer {{login.response.body.$.token}}
 
-### 404
+### 404 
 DELETE {{baseUrl}}/grades/{{createGrade.response.body.$.id}}
+Authorization: Bearer {{login.response.body.$.token}}
