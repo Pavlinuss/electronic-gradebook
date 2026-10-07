@@ -1,0 +1,14 @@
+ .gitignore              |    4 [32m+[m
+ .vscode/extensions.json |    5 [32m+[m
+ controllers/grades.js   |   83 [32m++++[m
+ example-grade.json      |    7 [32m+[m
+ models/grades.js        |    7 [32m+[m
+ package-lock.json       | 1240 [32m+++++++++++++++++++++++++++++++++++++++++++++++[m
+ package.json            |   21 [32m+[m
+ report.html             |  136 [32m++++++[m
+ requests.http           |   52 [32m++[m
+ rest-client.md          |   33 [32m++[m
+ routes/grades.js        |   11 [32m+[m
+ server.js               |   34 [32m++[m
+ test/grades.test.js     |   79 [32m+++[m
+ 13 files changed, 1712 insertions(+)
